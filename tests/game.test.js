@@ -5,7 +5,6 @@ import {
     defaultDesign,
     evaluate,
     createFlight,
-    resolveEvent,
     flightStatus,
     flightReport,
     advanceFlight,
@@ -16,6 +15,7 @@ import {
     recordProgress,
     playerRank,
     crisisExplanation,
+    restoreProgress,
 } from "../src/game.js";
 
 import { finishSimulation } from "./flight-helpers.js";
@@ -31,6 +31,18 @@ const catalog = Object.fromEntries(
     }),
 );
 const mission = catalog.missions[0];
+
+test("progress restoration skips broken records and keeps valid mission results", () => {
+    const saved = {
+        hello: { flights: 3, wins: 1, best: 812, stars: 2 },
+        lunar: null,
+        apollo: { flights: 1, wins: 5, best: "bad", stars: 8 },
+        unknown: { flights: 1, wins: 1, best: 900, stars: 3 }
+    };
+
+    assert.deepEqual(restoreProgress(saved, catalog.missions), { hello: saved.hello });
+    assert.deepEqual(restoreProgress([], catalog.missions), {});
+});
 
 test("the guided design meets its instructions and can survive the taught responses", () => {
     const design = defaultDesign();

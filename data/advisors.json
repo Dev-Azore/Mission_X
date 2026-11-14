@@ -1,16 +1,16 @@
 [
     {
-        "id": "maya",
-        "name": "Maya Chen",
+        "id": "usama",
+        "name": "Usama",
         "role": "SYSTEMS ENGINEER",
-        "initials": "MC",
+        "initials": "U",
         "color": "mint"
     },
     {
-        "id": "kofi",
-        "name": "Dr. Kofi Mensah",
+        "id": "danbaiwa",
+        "name": "Dr Danbaiwa",
         "role": "MISSION SCIENTIST",
-        "initials": "KM",
+        "initials": "DD",
         "color": "violet"
     },
     {

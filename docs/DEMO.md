@@ -8,7 +8,7 @@ Open the game and choose **Play your first mission**. Introduce the flood-monito
 
 ## Build with purpose
 
-Follow Maya's highlighted instructions. Confirm the sun-synchronous path and Atlas rocket, increase the battery to 400 Wh, and set camera observing time to 100%.
+Follow Usama's highlighted instructions. Confirm the sun-synchronous path and Atlas rocket, increase the battery to 400 Wh, and set camera observing time to 100%.
 
 “The rocket carries the satellite. The support systems keep it alive. The camera does the research. We are packing spare battery capacity because we cannot predict everything that will happen.”
 
@@ -34,7 +34,7 @@ Show the risk indicator changing, then return to Survey for the teaching flight.
 
 The guided mission guarantees a battery fault as its first teaching incident, but its time is random. The flight freezes and an alert sounds.
 
-Read Maya's explanation: a module is one section of the battery. Choose **Isolate the module**. Show battery storage falling from 400 to 300 Wh while science remains protected. Connect that result to the reserve the player deliberately built.
+Read Usama's explanation: a module is one section of the battery. Choose **Isolate the module**. Show battery storage falling from 400 to 300 Wh while science remains protected. Connect that result to the reserve the player deliberately built.
 
 Click **Resume flight**. The same spacecraft continues from the same mission position with its updated condition.
 
@@ -79,4 +79,6 @@ For a longer presentation, try **Against the Odds**. It guarantees array damage 
 
 MissionX is a spacecraft strategy game built in plain JavaScript. Players design an orbit, rocket, support systems, and science payload, then operate the satellite through an unpredictable flight. Quiet stretches give way to one to three incidents, with risk affected by engineering reserves, live operating modes, and previous responses. 
 
-The simulation pauses for decisions and resumes with their consequences. Six linked gauges, scripted advisors, original flight animation, sound, causal debriefs, mission patches, and saved-flight comparisons turn engineering trade-offs into playable learning. Four missions include lunar exploration, an Apollo-style rescue, and a sandbox.
+The simulation pauses for decisions and resumes with their consequences. Six linked gauges, scripted advisors, original flight animation, sound, causal debriefs, mission patches, and saved-flight comparisons turn engineering trade-offs into playable learning. 
+
+Four missions include lunar exploration, an Apollo-style rescue, and a sandbox. No backend or external runtime dependencies are required.

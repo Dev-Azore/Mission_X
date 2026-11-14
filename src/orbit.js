@@ -193,10 +193,10 @@ export function makePlanet(moon = false) {
             let color = moon
                 ? [130 + noise * 22, 140 + noise * 22, 147 + noise * 22]
                 : polar
-                  ? [161, 200, 206]
-                  : land
-                    ? [62 + noise * 13, 124 + noise * 17, 110 + noise * 10]
-                    : [21 + noise * 3, 65 + noise * 6, 96 + noise * 8];
+                    ? [161, 200, 206]
+                    : land
+                        ? [62 + noise * 13, 124 + noise * 17, 110 + noise * 10]
+                        : [21 + noise * 3, 65 + noise * 6, 96 + noise * 8];
 
             if (clouds && !moon) {
                 color = color.map((value, i) => {
@@ -273,8 +273,8 @@ export function createOrbit(canvas, getState) {
             state.orbitId === "lunar"
                 ? -0.85
                 : state.orbitId === "sso"
-                  ? -0.55
-                  : -0.23;
+                    ? -0.55
+                    : -0.23;
         const angle = reduceMotion || paused ? 0.8 : time * 0.00016;
 
         ctx.clearRect(0, 0, width, height);

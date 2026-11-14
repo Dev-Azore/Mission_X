@@ -63,14 +63,14 @@ export const tutorialSteps = [
         tab: "payload",
         title: "Give the camera more time to work.",
         instruction:
-            "Keep the Multispectral camera selected and move Observing duty to 100%. You will collect 64 science points before flight losses; the mission needs 55.",
+            "Keep the Multispectral camera selected and move Time spent observing to 100%. You can collect 64 science points before flight losses; the mission needs 55.",
         action: "Review my satellite",
         check: (design) => {
             return design.instruments.some((item) => {
                 return item.id === "camera" && item.dutyCycle === 1;
             });
         },
-        hint: "Set the camera’s Observing duty slider to 100%.",
+        hint: "Set the camera’s Time spent observing slider to 100%.",
     },
     {
         tab: "payload",
@@ -91,6 +91,32 @@ export function earnedStars(report) {
     }
 
     return 1 + Number(report.score >= 750) + Number(report.score >= 900);
+}
+
+export function restoreProgress(saved, missions) {
+    const restored = {};
+
+    if (!saved || typeof saved !== "object" || Array.isArray(saved)) {
+        return restored;
+    }
+
+    for (const mission of missions) {
+        const entry = saved[mission.id];
+
+        if (!entry || typeof entry !== "object") {
+            continue;
+        }
+
+        const validNumbers = [entry.flights, entry.wins, entry.best, entry.stars].every((value) => {
+            return Number.isInteger(value) && value >= 0;
+        });
+
+        if (validNumbers && entry.wins <= entry.flights && entry.best <= 1000 && entry.stars <= 3) {
+            restored[mission.id] = { ...entry };
+        }
+    }
+
+    return restored;
 }
 
 export function recordProgress(progress, missionId, report) {

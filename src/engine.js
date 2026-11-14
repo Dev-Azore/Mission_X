@@ -1,5 +1,10 @@
 // The engine has no browser dependencies. Values are educational approximations,
 // not trajectory calculations or specifications for real flight hardware.
+const FLIGHT_DURATION_SECONDS = 120;
+const MAX_INCIDENTS = 3;
+const MIN_QUIET_SECONDS = 15;
+const QUIET_INTERVAL_RANGE = 25;
+
 export const clamp = (value, min, max) => {
     return Math.min(max, Math.max(min, value));
 };
@@ -23,7 +28,42 @@ export const defaultDesign = (missionId = "hello") => {
     };
 };
 
+export function isValidDesign(design, catalog) {
+    if (!design || !design.bus || !Array.isArray(design.instruments)) {
+        return false;
+    }
+
+    const bus = design.bus;
+    const validHardware = catalog.orbits.some((orbit) => {
+        return orbit.id === design.orbitId;
+    }) && catalog.launchers.some((launcher) => {
+        return launcher.id === design.launcherId;
+    }) && catalog.parts.computers.some((computer) => {
+        return computer.id === bus.computer;
+    });
+    const validResources = [bus.solarArea, bus.battery, bus.antenna].every((value) => {
+        return Number.isFinite(value) && value >= 0;
+    });
+    const validInstruments = design.instruments.every((instrument) => {
+        return instrument !== null && typeof instrument === "object"
+            && catalog.parts.instruments.some((part) => {
+                return part.id === instrument.id;
+            })
+            && Number.isFinite(instrument.dutyCycle)
+            && instrument.dutyCycle >= 0 && instrument.dutyCycle <= 1;
+    });
+    const uniqueInstruments = new Set(design.instruments.map((instrument) => {
+        return instrument === null || typeof instrument !== "object" ? null : instrument.id;
+    })).size === design.instruments.length;
+
+    return validHardware && validResources && validInstruments && uniqueInstruments;
+}
+
 export function evaluate(design, mission, catalog) {
+    if (!isValidDesign(design, catalog)) {
+        throw new Error("Invalid spacecraft design. Load a saved design or reset this mission.");
+    }
+
     const orbit = catalog.orbits.find((item) => {
         return item.id === design.orbitId;
     });
@@ -207,16 +247,16 @@ export function advisorMessages(gauges, mission) {
         gauges.comms < 1
             ? `We're collecting more than we can send. ${Math.round((1 - gauges.comms) * 100)}% of the science never gets home. Try a larger antenna.`
             : gauges.battery < gauges.eclipseNeed * 1.5
-              ? "Eclipse reserve is thin. A bigger battery buys us breathing room."
-              : `Power closes with ${Math.round(gauges.supply - gauges.demand)} W to spare. That's room to recover when something breaks.`,
+                ? "Eclipse reserve is thin. A bigger battery buys us breathing room."
+                : `Power closes with ${Math.round(gauges.supply - gauges.demand)} W to spare. That's room to recover when something breaks.`,
         gauges.science < mission.science
             ? `We need ${mission.science} science points. We're at ${Math.round(gauges.science)}. More observing time could close that gap.`
             : `The payload meets our science target. Keep the data flowing and this mission will matter.`,
         gauges.cost > mission.budget
             ? `We're over budget. Ambition is good. An unfunded spacecraft stays on the ground.`
             : gauges.mass / gauges.capacity > 0.9
-              ? "We are close to the mass limit. Every extra kilogram needs a reason."
-              : `We have $${(mission.budget - gauges.cost).toFixed(1)}M in reserve. Keep some for the surprises.`,
+                ? "We are close to the mass limit. Every extra kilogram needs a reason."
+                : `We have $${(mission.budget - gauges.cost).toFixed(1)}M in reserve. Keep some for the surprises.`,
     ];
 }
 
@@ -247,14 +287,14 @@ function flightRandom(flight) {
 }
 
 export function flightRisk(flight) {
-    const g = flight.gauges;
+    const gauges = flight.gauges;
     const powerUse =
-        (g.demand * flight.loadFactor) /
-        Math.max(1, g.supply * flight.solarFactor);
+        (gauges.demand * flight.loadFactor) /
+        Math.max(1, gauges.supply * flight.solarFactor);
     const batteryUse =
-        (g.eclipseNeed * flight.loadFactor) /
-        Math.max(1, g.battery * flight.batteryFactor);
-    const dataUse = g.generated / Math.max(1, g.returned);
+        (gauges.eclipseNeed * flight.loadFactor) /
+        Math.max(1, gauges.battery * flight.batteryFactor);
+    const dataUse = gauges.generated / Math.max(1, gauges.returned);
 
     return clamp(
         0.12 +
@@ -267,8 +307,8 @@ export function flightRisk(flight) {
             (flight.difficulty === "director"
                 ? 0.1
                 : flight.difficulty === "cadet"
-                  ? -0.06
-                  : 0),
+                    ? -0.06
+                    : 0),
         0.08,
         0.9,
     );
@@ -276,8 +316,8 @@ export function flightRisk(flight) {
 
 function nextQuietInterval(flight) {
     return (
-        15 +
-        flightRandom(flight) * 25 +
+        MIN_QUIET_SECONDS +
+        flightRandom(flight) * QUIET_INTERVAL_RANGE +
         Math.max(0, 0.35 - flightRisk(flight)) * 15
     );
 }
@@ -303,7 +343,7 @@ export function createFlight(
         missionId: mission.id,
         difficulty,
         durationDays: Math.round(mission.years * 365),
-        durationSeconds: 120,
+        durationSeconds: FLIGHT_DURATION_SECONDS,
         elapsedSeconds: 0,
         nextCheckSeconds: 0,
         randomDraws: 0,
@@ -353,6 +393,21 @@ export function setFlightMode(flight, mode) {
     };
 }
 
+function incidentWeight(eventId, flight) {
+    const gauges = flight.gauges;
+
+    switch (eventId) {
+    case "battery":
+        return 1 + gauges.eclipseNeed / (gauges.battery * flight.batteryFactor) * 4;
+    case "station":
+        return 1 + gauges.generated / gauges.returned * 2;
+    case "flare":
+        return flight.design.bus.computer === "hardened" ? 0.6 : 2;
+    default:
+        return 1;
+    }
+}
+
 function selectIncident(flight, catalog) {
     if (!flight.events.length && flight.guided) {
         return catalog.events.find((event) => {
@@ -374,17 +429,8 @@ function selectIncident(flight, catalog) {
             })
         );
     });
-    const g = flight.gauges;
     const weights = available.map((event) => {
-        return event.id === "battery"
-            ? 1 + (g.eclipseNeed / (g.battery * flight.batteryFactor)) * 4
-            : event.id === "station"
-              ? 1 + (g.generated / g.returned) * 2
-              : event.id === "flare"
-                ? flight.design.bus.computer === "hardened"
-                    ? 0.6
-                    : 2
-                : 1;
+        return incidentWeight(event.id, flight);
     });
     let draw =
         flightRandom(flight) *
@@ -441,7 +487,7 @@ export function advanceFlight(flight, seconds, catalog) {
         if (next.elapsedSeconds >= next.nextCheckSeconds) {
             const mustTeach = next.events.length === 0;
             const occurs =
-                next.events.length < 3 &&
+                next.events.length < MAX_INCIDENTS &&
                 (mustTeach ||
                     flightRandom(next) < 0.18 + flightRisk(next) * 0.78);
 
@@ -454,7 +500,7 @@ export function advanceFlight(flight, seconds, catalog) {
             }
 
             next.nextCheckSeconds =
-                next.events.length >= 3
+                next.events.length >= MAX_INCIDENTS
                     ? Infinity
                     : next.elapsedSeconds + nextQuietInterval(next);
         }
@@ -477,8 +523,8 @@ export function resolveEvent(flight, choiceIndex) {
         flight.difficulty === "cadet"
             ? 0.65
             : flight.difficulty === "director"
-              ? 1.2
-              : 1;
+                ? 1.2
+                : 1;
 
     next.health = clamp(
         next.health +
@@ -512,7 +558,7 @@ export function resolveEvent(flight, choiceIndex) {
     next.decisions.push(choiceIndex);
     next.activeEvent = false;
     next.nextCheckSeconds =
-        next.events.length >= 3
+        next.events.length >= MAX_INCIDENTS
             ? Infinity
             : next.elapsedSeconds + nextQuietInterval(next);
     next.timeline.push({
@@ -529,7 +575,7 @@ export function resolveEvent(flight, choiceIndex) {
 // Used during flight as well as in the debrief. Choice previews and the final
 // outcome must use the same formulas, otherwise feedback can teach the wrong thing.
 export function flightStatus(flight, mission) {
-    const g = flight.gauges;
+    const gauges = flight.gauges;
     const remaining = Math.max(
         0,
         flight.durationSeconds - flight.elapsedSeconds,
@@ -542,24 +588,24 @@ export function flightStatus(flight, mission) {
         (flight.loadSeconds + remaining * mode.load) / flight.durationSeconds;
     const powerRatio = Math.min(
         1,
-        (g.supply * flight.solarFactor) /
-            (g.demand * flight.loadFactor * operatingLoad),
+        (gauges.supply * flight.solarFactor) /
+            (gauges.demand * flight.loadFactor * operatingLoad),
     );
     const eclipseRatio = Math.min(
         1,
-        (g.battery * flight.batteryFactor) /
-            (g.eclipseNeed * flight.loadFactor * operatingLoad),
+        (gauges.battery * flight.batteryFactor) /
+            (gauges.eclipseNeed * flight.loadFactor * operatingLoad),
     );
-    const lifetime = g.lifetime * flight.lifetimeFactor;
+    const lifetime = gauges.lifetime * flight.lifetimeFactor;
     const science =
-        g.science *
+        gauges.science *
         observingFactor *
         flight.scienceFactor *
         flight.health *
         powerRatio *
         eclipseRatio *
         Math.min(1, lifetime / mission.years);
-    const cost = g.cost + flight.extraCost;
+    const cost = gauges.cost + flight.extraCost;
     const success =
         science >= mission.science &&
         flight.health >= 0.5 &&
@@ -574,20 +620,20 @@ export function flightStatus(flight, mission) {
         cost,
         success,
         health: flight.health,
-        battery: g.battery * flight.batteryFactor,
-        supply: g.supply * flight.solarFactor,
-        demand: g.demand * flight.loadFactor,
-        eclipseNeed: g.eclipseNeed * flight.loadFactor,
+        battery: gauges.battery * flight.batteryFactor,
+        supply: gauges.supply * flight.solarFactor,
+        demand: gauges.demand * flight.loadFactor,
+        eclipseNeed: gauges.eclipseNeed * flight.loadFactor,
     };
 }
 
 export function flightReport(flight, mission, previousScore = 0) {
-    const g = flight.gauges;
+    const gauges = flight.gauges;
     const { powerRatio, eclipseRatio, lifetime, science, cost, success } =
         flightStatus(flight, mission);
     const trust = Math.round(
         clamp(
-            (g.margins.reduce((sum, margin) => {
+            (gauges.margins.reduce((sum, margin) => {
                 return sum + clamp(margin, 0, 0.4);
             }, 0) /
                 2) *
@@ -609,7 +655,9 @@ export function flightReport(flight, mission, previousScore = 0) {
 
     if (powerRatio < 1) {
         causeChain.push(
-            "Array damage exceeded the power margin → instrument brownouts → fewer observations.",
+            flight.solarFactor < 1
+                ? "Array damage exceeded the power margin → instrument brownouts → fewer observations."
+                : "Power demand exceeded generation → instrument brownouts → fewer observations.",
         );
     }
 
@@ -653,14 +701,14 @@ export function flightReport(flight, mission, previousScore = 0) {
         powerRatio < 1
             ? "Add solar area before the next flight."
             : eclipseRatio < 1
-              ? "Increase battery capacity to survive a failed cell."
-              : lifetime < mission.years
-                ? "Use a hardened computer or save fuel during crises."
-                : science < mission.science
-                  ? "Increase primary-instrument duty and leave power headroom."
-                  : cost > mission.budget
-                    ? "Leave at least $8M in reserve for emergency ground support."
-                    : "Try the same mission with a smaller launcher. Can you keep the science and spend less?";
+                ? "Increase battery capacity to survive a failed cell."
+                : lifetime < mission.years
+                    ? "Use a hardened computer or save fuel during crises."
+                    : science < mission.science
+                        ? "Increase primary-instrument duty and leave power headroom."
+                        : cost > mission.budget
+                            ? "Leave at least $8M in reserve for emergency ground support."
+                            : "Try the same mission with a smaller launcher. Can you keep the science and spend less?";
 
     return {
         score,

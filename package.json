@@ -5,9 +5,10 @@
     "type": "module",
     "description": "A systems-thinking space mission game, built with vanilla JavaScript.",
     "scripts": {
-        "dev": "node scripts/serve.js --watch-mode",
+        "dev": "node --watch scripts/serve.js",
         "start": "node scripts/serve.js",
         "test": "node --test tests/*.test.js",
+        "build": "node scripts/build.js",
         "lint": "eslint . --max-warnings 0",
         "lint:fix": "eslint . --fix --max-warnings 0"
     },

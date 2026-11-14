@@ -45,6 +45,35 @@ const flightReadyDesign = (id) => {
     return design;
 };
 
+test("invalid saved hardware and nonnumeric resource values cannot launch", () => {
+    const invalid = defaultDesign();
+
+    invalid.bus.battery = "not a number";
+    assert.throws(() => {
+        return evaluate(invalid, mission("hello"), catalog);
+    }, /Invalid spacecraft design/);
+
+    invalid.bus.battery = 300;
+    invalid.instruments = [{ id: "missing-camera", dutyCycle: 1 }];
+    assert.throws(() => {
+        return createFlight(invalid, mission("sandbox"), catalog, 42, "engineer");
+    }, /Invalid spacecraft design/);
+});
+
+test("a power shortfall without array damage gets an accurate debrief", () => {
+    const flight = createFlight(flightReadyDesign("hello"), mission("hello"), catalog, 42, "engineer");
+
+    flight.loadFactor = 3;
+    const report = flightReport(flight, mission("hello"));
+
+    assert.ok(report.causeChain.some((cause) => {
+        return cause.includes("Power demand exceeded generation"); 
+    }));
+    assert.ok(!report.causeChain.some((cause) => {
+        return cause.includes("Array damage"); 
+    }));
+});
+
 test("adding a radar ripples into mass, demand, data, cost, and communication coverage", () => {
     const design = defaultDesign();
     const before = evaluate(design, mission("hello"), catalog);

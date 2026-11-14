@@ -184,6 +184,18 @@ try {
         }),
         812,
     );
+    await migrationPage.evaluate((design) => {
+        localStorage.setItem("missionx-session", JSON.stringify({missionId: "sandbox", design}));
+        localStorage.setItem("missionx-progress", JSON.stringify({lunar: null}));
+        localStorage.setItem("missionx-attempts", "{}");
+        localStorage.setItem("missionx-designs", "[null]");
+    }, {...defaultDesign("sandbox"), instruments: [{id: "missing-camera", dutyCycle: 1}]});
+    await migrationPage.reload();
+    await migrationPage.waitForSelector("#gauges .gauge");
+    assert.equal(await migrationPage.locator("#mission-name").innerText(), "Hello, Orbit");
+    await migrationPage.click('#dialog [data-action="free-play"]');
+    await migrationPage.click('[data-action="compare"]');
+    assert.equal(await migrationPage.locator(".empty-state").count(), 1);
     await migrationContext.close();
     assert.equal(errors.length, 0, errors.join("\n"));
     console.log(

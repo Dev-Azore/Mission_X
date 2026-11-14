@@ -285,8 +285,8 @@ export function createFlightScene(canvas, getPlayback) {
                 playback.mode === "crisis"
                     ? "#ef9d70"
                     : playback.batteryFactor < 1
-                      ? "#465b51"
-                      : "#a9efd0";
+                        ? "#465b51"
+                        : "#a9efd0";
             ctx.fillRect(-7, 8, 14, 7);
             if (playback.mode === "crisis") {
                 ctx.shadowColor = "#ef9d70";

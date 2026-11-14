@@ -1,139 +1,676 @@
 /* A continuous visual flight, interrupted by decisions rather than replaced by them. */
-.travel-dialog { max-width: 1090px; padding: 0; background: #0e1a22; }
-.travel-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 27px 31px 23px; border-bottom: 1px solid #31423f; }
-.travel-header .dialog-eyebrow { display: block; font-size: 8px; letter-spacing: 1.2px; margin: 0 0 12px; }
-.travel-header h2 { font-size: 30px; margin: 0; letter-spacing: -.8px; }
-.travel-live { display: flex; align-items: center; gap: 7px; font: 8px var(--mono); letter-spacing: 1px; color: var(--mint); margin-right: 20px; white-space: nowrap; }
-.travel-live i { width: 5px; height: 5px; background: var(--mint); border-radius: 50%; box-shadow: 0 0 12px #a9efd055; }
-.travel-live.paused { color: var(--orange); }
-.travel-live.paused i { background: var(--orange); }
-.flight-visual { position: relative; height: 410px; overflow: hidden; }
-#flight-scene { display: block; width: 100%; height: 100%; }
-.travel-clock { position: absolute; top: 24px; left: 30px; pointer-events: none; }
-.travel-clock small { display: block; color: #8aa59c; font: 7px var(--mono); letter-spacing: 1.3px; }
-.travel-clock strong { display: block; font: 27px var(--mono); color: #d8ecde; margin-top: 8px; letter-spacing: -1px; }
-.travel-caption { position: absolute; bottom: 23px; right: 30px; width: 280px; padding: 15px 17px; border-left: 2px solid #a9efd060; background: #0b1c22bd; backdrop-filter: blur(7px); pointer-events: none; }
-.travel-caption span { display: block; font: 8px var(--mono); letter-spacing: .8px; line-height: 1.8; color: var(--mint); }
-.travel-caption p { color: #99b4b1; font-size: 11px; line-height: 1.8; margin: 8px 0 0; }
-.travel-telemetry { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #32463d; border-bottom: 1px solid #32463d; padding: 20px 0; background: #12231d50; }
-.travel-telemetry > div { padding: 0 24px; border-right: 1px solid #32463d; }
-.travel-telemetry > div:last-child { border-right: none; }
-.travel-telemetry span { font: 7px var(--mono); letter-spacing: .8px; color: #7d9e89; }
-.travel-telemetry strong { font: 26px var(--mono); color: #d3e7d9; display: block; margin-top: 9px; letter-spacing: -1px; }
-.travel-telemetry small { font: 10px var(--mono); color: #6e9981; margin-left: 5px; }
-.travel-route { display: flex; align-items: center; justify-content: space-between; padding: 19px 31px 13px; }
-.travel-route > span { font: 8px var(--mono); color: #637e75; display: flex; align-items: center; gap: 8px; }
-.travel-route i { width: 5px; height: 5px; background: #3e5649; border-radius: 50%; }
-.travel-route .passed { color: #b3d6bc; }
-.travel-route .passed i { background: var(--mint); }
-.travel-progress { height: 3px; background: #293e32; margin: 0 31px; border-radius: 3px; overflow: hidden; }
-.travel-progress > i { height: 100%; display: block; width: 0; background: var(--mint); transition: width .08s linear; }
-.travel-controls { display: flex; align-items: center; gap: 22px; padding: 20px 31px 24px; }
-.travel-controls > .outline-button { font-size: 10px; padding: 10px 13px; gap: 8px; }
-.travel-controls > .outline-button .icon { width: 13px; height: 13px; }
-.travel-speeds { display: flex; align-items: center; gap: 5px; }
-.travel-speeds > span { font: 6px var(--mono); letter-spacing: .8px; color: #779686; margin-right: 7px; }
-.travel-speeds > button { border: 1px solid #345344; font: 10px var(--mono); border-radius: 4px; padding: 7px 9px; color: #91b49b; }
-.travel-speeds > button:hover { border-color: var(--mint); }
-.travel-speeds > button.active { background: #a9efd01c; color: var(--mint); border-color: #a9efd080; }
-.travel-hint { font-size: 9px; color: #6d8f7d; margin-left: auto; line-height: 1.8; }
-.travel-sound.enabled { color: var(--mint); border-color: #a9efd070; }
-.flight-operations { padding: 0 31px 25px; }
-.operation-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 12px; font: 7px var(--mono); letter-spacing: .8px; color: #86a592; }
-.operation-heading #risk-label { color: var(--mint); }
-.operation-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-.operation-buttons > button { border: 1px solid #355442; border-radius: 5px; padding: 13px 15px; text-align: left; background: #10261c50; }
-.operation-buttons > button:hover { border-color: #a9efd070; }
-.operation-buttons > button.active { border-color: var(--mint); background: #a9efd010; }
-.operation-buttons strong { display: block; color: #c0d9c8; font-size: 12px; font-weight: 500; }
-.operation-buttons small { display: block; font-size: 9px; line-height: 1.7; margin-top: 6px; color: #7e9f8b; }
-.risk-track { height: 3px; background: #283c30; margin-top: 14px; border-radius: 2px; overflow: hidden; }
-.risk-track i { display: block; height: 100%; background: var(--mint); transition: width .3s; }
-.risk-track i.high { background: var(--orange); }
-#operation-description { font-size: 9px; color: #6e917d; line-height: 1.8; margin: 10px 0 0; }
-.incident-history { color: #8caf98; display: flex; align-items: center; gap: 7px; font: 8px var(--mono); letter-spacing: .7px; margin: 10px 0 15px; }
-.incident-history .icon { width: 12px; height: 12px; }
-.crisis-scene { height: 220px; position: relative; border-bottom: 1px solid #e8a57545; background: #08141e; }
-.scene-paused, .scene-repaired { position: absolute; bottom: 13px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; gap: 8px; font: 7px var(--mono); letter-spacing: 1px; color: #efb48c; background: #39291ded; border: 1px solid #e8a57545; border-radius: 4px; padding: 10px 15px; white-space: nowrap; }
-.scene-paused .icon, .scene-repaired .icon { width: 12px; height: 12px; }
-.scene-repaired { background: #172e22ed; color: var(--mint); border-color: #a9efd045; }
-.recovery-scene { position: relative; height: 175px; margin: 20px -39px 25px; border-top: 1px solid #a9efd020; border-bottom: 1px solid #a9efd020; }
-.flight-dialog .flight-sidebar { padding-top: 25px; }
-.flight-dialog .flight-main { padding-top: 31px; }
-.flight-dialog .flight-orb { width: 65px; height: 65px; margin: 20px auto 16px; }
-.flight-dialog .flight-orb .icon { width: 40px; height: 40px; }
-.flight-dialog .flight-day b { font-size: 40px; }
+.travel-dialog {
+  max-width: 1090px;
+  padding: 0;
+  background: #0e1a22;
+}
+
+.travel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 27px 31px 23px;
+  border-bottom: 1px solid #31423f;
+}
+
+.travel-header .dialog-eyebrow {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  margin: 0 0 12px;
+}
+
+.travel-header h2 {
+  font-size: 30px;
+  margin: 0;
+  letter-spacing: -.8px;
+}
+
+.travel-live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 8px var(--mono);
+  letter-spacing: 1px;
+  color: var(--mint);
+  margin-right: 20px;
+  white-space: nowrap;
+}
+
+.travel-live i {
+  width: 5px;
+  height: 5px;
+  background: var(--mint);
+  border-radius: 50%;
+  box-shadow: 0 0 12px #a9efd055;
+}
+
+.travel-live.paused {
+  color: var(--orange);
+}
+
+.travel-live.paused i {
+  background: var(--orange);
+}
+
+.flight-visual {
+  position: relative;
+  height: 410px;
+  overflow: hidden;
+}
+
+#flight-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.travel-clock {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  pointer-events: none;
+}
+
+.travel-clock small {
+  display: block;
+  color: #8aa59c;
+  font: 7px var(--mono);
+  letter-spacing: 1.3px;
+}
+
+.travel-clock strong {
+  display: block;
+  font: 27px var(--mono);
+  color: #d8ecde;
+  margin-top: 8px;
+  letter-spacing: -1px;
+}
+
+.travel-caption {
+  position: absolute;
+  bottom: 23px;
+  right: 30px;
+  width: 280px;
+  padding: 15px 17px;
+  border-left: 2px solid #a9efd060;
+  background: #0b1c22bd;
+  backdrop-filter: blur(7px);
+  pointer-events: none;
+}
+
+.travel-caption span {
+  display: block;
+  font: 8px var(--mono);
+  letter-spacing: .8px;
+  line-height: 1.8;
+  color: var(--mint);
+}
+
+.travel-caption p {
+  color: #99b4b1;
+  font-size: 11px;
+  line-height: 1.8;
+  margin: 8px 0 0;
+}
+
+.travel-telemetry {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #32463d;
+  border-bottom: 1px solid #32463d;
+  padding: 20px 0;
+  background: #12231d50;
+}
+
+.travel-telemetry > div {
+  padding: 0 24px;
+  border-right: 1px solid #32463d;
+}
+
+.travel-telemetry > div:last-child {
+  border-right: none;
+}
+
+.travel-telemetry span {
+  font: 7px var(--mono);
+  letter-spacing: .8px;
+  color: #7d9e89;
+}
+
+.travel-telemetry strong {
+  font: 26px var(--mono);
+  color: #d3e7d9;
+  display: block;
+  margin-top: 9px;
+  letter-spacing: -1px;
+}
+
+.travel-telemetry small {
+  font: 10px var(--mono);
+  color: #6e9981;
+  margin-left: 5px;
+}
+
+.travel-route {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 19px 31px 13px;
+}
+
+.travel-route > span {
+  font: 8px var(--mono);
+  color: #637e75;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.travel-route i {
+  width: 5px;
+  height: 5px;
+  background: #3e5649;
+  border-radius: 50%;
+}
+
+.travel-route .passed {
+  color: #b3d6bc;
+}
+
+.travel-route .passed i {
+  background: var(--mint);
+}
+
+.travel-progress {
+  height: 3px;
+  background: #293e32;
+  margin: 0 31px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.travel-progress > i {
+  height: 100%;
+  display: block;
+  width: 0;
+  background: var(--mint);
+  transition: width .08s linear;
+}
+
+.travel-controls {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 31px 24px;
+}
+
+.travel-controls > .outline-button {
+  font-size: 10px;
+  padding: 10px 13px;
+  gap: 8px;
+}
+
+.travel-controls > .outline-button .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.travel-speeds {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.travel-speeds > span {
+  font: 6px var(--mono);
+  letter-spacing: .8px;
+  color: #779686;
+  margin-right: 7px;
+}
+
+.travel-speeds > button {
+  border: 1px solid #345344;
+  font: 10px var(--mono);
+  border-radius: 4px;
+  padding: 7px 9px;
+  color: #91b49b;
+}
+
+.travel-speeds > button:hover {
+  border-color: var(--mint);
+}
+
+.travel-speeds > button.active {
+  background: #a9efd01c;
+  color: var(--mint);
+  border-color: #a9efd080;
+}
+
+.travel-hint {
+  font-size: 9px;
+  color: #6d8f7d;
+  margin-left: auto;
+  line-height: 1.8;
+}
+
+.travel-sound.enabled {
+  color: var(--mint);
+  border-color: #a9efd070;
+}
+
+.flight-operations {
+  padding: 0 31px 25px;
+}
+
+.operation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+  font: 7px var(--mono);
+  letter-spacing: .8px;
+  color: #86a592;
+}
+
+.operation-heading #risk-label {
+  color: var(--mint);
+}
+
+.operation-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+
+.operation-buttons > button {
+  border: 1px solid #355442;
+  border-radius: 5px;
+  padding: 13px 15px;
+  text-align: left;
+  background: #10261c50;
+}
+
+.operation-buttons > button:hover {
+  border-color: #a9efd070;
+}
+
+.operation-buttons > button.active {
+  border-color: var(--mint);
+  background: #a9efd010;
+}
+
+.operation-buttons strong {
+  display: block;
+  color: #c0d9c8;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.operation-buttons small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.7;
+  margin-top: 6px;
+  color: #7e9f8b;
+}
+
+.risk-track {
+  height: 3px;
+  background: #283c30;
+  margin-top: 14px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.risk-track i {
+  display: block;
+  height: 100%;
+  background: var(--mint);
+  transition: width .3s;
+}
+
+.risk-track i.high {
+  background: var(--orange);
+}
+
+#operation-description {
+  font-size: 9px;
+  color: #6e917d;
+  line-height: 1.8;
+  margin: 10px 0 0;
+}
+
+.incident-history {
+  color: #8caf98;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 8px var(--mono);
+  letter-spacing: .7px;
+  margin: 10px 0 15px;
+}
+
+.incident-history .icon {
+  width: 12px;
+  height: 12px;
+}
+
+.crisis-scene {
+  height: 220px;
+  position: relative;
+  border-bottom: 1px solid #e8a57545;
+  background: #08141e;
+}
+
+.scene-paused, .scene-repaired {
+  position: absolute;
+  bottom: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: 7px var(--mono);
+  letter-spacing: 1px;
+  color: #efb48c;
+  background: #39291ded;
+  border: 1px solid #e8a57545;
+  border-radius: 4px;
+  padding: 10px 15px;
+  white-space: nowrap;
+}
+
+.scene-paused .icon, .scene-repaired .icon {
+  width: 12px;
+  height: 12px;
+}
+
+.scene-repaired {
+  background: #172e22ed;
+  color: var(--mint);
+  border-color: #a9efd045;
+}
+
+.recovery-scene {
+  position: relative;
+  height: 175px;
+  margin: 20px -39px 25px;
+  border-top: 1px solid #a9efd020;
+  border-bottom: 1px solid #a9efd020;
+}
+
+.flight-dialog .flight-sidebar {
+  padding-top: 25px;
+}
+
+.flight-dialog .flight-main {
+  padding-top: 31px;
+}
+
+.flight-dialog .flight-orb {
+  width: 65px;
+  height: 65px;
+  margin: 20px auto 16px;
+}
+
+.flight-dialog .flight-orb .icon {
+  width: 40px;
+  height: 40px;
+}
+
+.flight-dialog .flight-day b {
+  font-size: 40px;
+}
+
 @media (max-width: 850px) {
-  .travel-header { padding: 25px; }
-  .travel-header h2 { font-size: 25px; }
-  .travel-live { font-size: 6px; margin-right: 12px; }
-  .flight-visual { height: 360px; }
-  .travel-controls { flex-wrap: wrap; gap: 15px; padding: 19px 25px; }
-  .travel-hint { font-size: 8px; margin-left: 0; }
-  .travel-telemetry > div { padding: 0 18px; }
-  .travel-telemetry span { font-size: 6px; }
-  .travel-telemetry strong { font-size: 23px; }
-}
-@media (max-width: 700px) {
-  .travel-controls { gap: 11px; }
-  .travel-controls .travel-sound { margin-left: 0; }
-  .travel-speeds { gap: 3px; }
-  .travel-speeds > button { padding: 7px 6px; }
-  .flight-operations { padding: 0 19px 19px; }
-  .operation-heading { font-size: 6px; letter-spacing: .5px; }
-  .operation-buttons { gap: 6px; }
-  .operation-buttons > button { padding: 11px 8px; }
-  .operation-buttons strong { font-size: 10px; }
-  .operation-buttons small { font-size: 7px; line-height: 1.8; }
-  #operation-description { font-size: 8px; }
-  .flight-sidebar .incident-history { grid-column: 1 / -1; margin: 0; font-size: 7px; }
-  .travel-dialog { width: calc(100% - 18px); max-height: 94dvh; }
-  .travel-header { padding: 25px 19px 19px; display: block; }
-  .travel-header .dialog-eyebrow { font-size: 6px; letter-spacing: .8px; margin-bottom: 11px; }
-  .travel-header h2 { font-size: 25px; padding-right: 10px; }
-  .travel-live { margin: 14px 0 0; font-size: 7px; }
-  .flight-visual { height: 315px; }
-  .travel-clock { top: 18px; left: 19px; }
-  .travel-clock small { font-size: 6px; }
-  .travel-clock strong { font-size: 23px; margin-top: 6px; }
-  .travel-caption { left: 19px; right: 19px; bottom: 16px; width: auto; padding: 10px 12px; }
-  .travel-caption span { font-size: 6px; }
-  .travel-caption p { font-size: 9px; margin-top: 5px; }
-  .travel-telemetry { grid-template-columns: 1fr 1fr; padding: 0; }
-  .travel-telemetry > div { padding: 15px 19px; }
-  .travel-telemetry > div:nth-child(2) { border-right: none; }
-  .travel-telemetry > div:nth-child(-n+2) { border-bottom: 1px solid #32463d; }
-  .travel-telemetry span { font-size: 6px; }
-  .travel-telemetry strong { font-size: 23px; margin-top: 8px; }
-  .travel-telemetry small { font-size: 9px; }
-  .travel-route { padding: 17px 15px 12px; }
-  .travel-route > span { font-size: 5px; gap: 4px; }
-  .travel-route i { width: 4px; height: 4px; }
-  .travel-progress { margin: 0 19px; }
-  .travel-controls { padding: 16px 19px 18px; gap: 13px; }
-  .travel-controls > .outline-button { font-size: 9px; padding: 9px 10px; }
-  .travel-speeds { gap: 4px; margin-left: auto; }
-  .travel-speeds > span { display: none; }
-  .travel-speeds > button { padding: 7px; font-size: 9px; }
-  .travel-hint { font-size: 8px; width: 100%; text-align: center; }
-  .crisis-scene { height: 165px; }
-  .scene-paused, .scene-repaired { font-size: 5px; letter-spacing: .5px; gap: 6px; padding: 8px 10px; bottom: 10px; }
-  .scene-paused .icon, .scene-repaired .icon { width: 10px; height: 10px; }
-  .recovery-scene { height: 155px; margin: 18px -21px 23px; }
-  .flight-dialog .flight-sidebar { padding-top: 22px; }
-  .flight-dialog .flight-main { padding-top: 25px; }
-  .flight-dialog .flight-day b { font-size: 20px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .travel-progress > i { transition: none; }
+  .travel-header {
+    padding: 25px;
+  }
+  .travel-header h2 {
+    font-size: 25px;
+  }
+  .travel-live {
+    font-size: 6px;
+    margin-right: 12px;
+  }
+  .flight-visual {
+    height: 360px;
+  }
+  .travel-controls {
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 19px 25px;
+  }
+  .travel-hint {
+    font-size: 8px;
+    margin-left: 0;
+  }
+  .travel-telemetry > div {
+    padding: 0 18px;
+  }
+  .travel-telemetry span {
+    font-size: 6px;
+  }
+  .travel-telemetry strong {
+    font-size: 23px;
+  }
 }
 
 @media (max-width: 700px) {
-  .is-orbit .flight-visual { height: 220px; }
-  .is-orbit .travel-telemetry > div { padding-top: 12px; padding-bottom: 12px; }
-  .is-orbit .travel-telemetry strong { font-size: 21px; }
-  .travel-controls { gap: 8px; }
-  .travel-sound > span { display: none; }
-  .travel-controls > .travel-sound { padding: 9px; }
-  .is-ascent .travel-caption { top: 19px; bottom: auto; left: auto; right: 16px; width: 158px; }
+  .travel-controls {
+    gap: 11px;
+  }
+  .travel-controls .travel-sound {
+    margin-left: 0;
+  }
+  .travel-speeds {
+    gap: 3px;
+  }
+  .travel-speeds > button {
+    padding: 7px 6px;
+  }
+  .flight-operations {
+    padding: 0 19px 19px;
+  }
+  .operation-heading {
+    font-size: 6px;
+    letter-spacing: .5px;
+  }
+  .operation-buttons {
+    gap: 6px;
+  }
+  .operation-buttons > button {
+    padding: 11px 8px;
+  }
+  .operation-buttons strong {
+    font-size: 10px;
+  }
+  .operation-buttons small {
+    font-size: 7px;
+    line-height: 1.8;
+  }
+  #operation-description {
+    font-size: 8px;
+  }
+  .flight-sidebar .incident-history {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 7px;
+  }
+  .travel-dialog {
+    width: calc(100% - 18px);
+    max-height: 94dvh;
+  }
+  .travel-header {
+    padding: 25px 19px 19px;
+    display: block;
+  }
+  .travel-header .dialog-eyebrow {
+    font-size: 6px;
+    letter-spacing: .8px;
+    margin-bottom: 11px;
+  }
+  .travel-header h2 {
+    font-size: 25px;
+    padding-right: 10px;
+  }
+  .travel-live {
+    margin: 14px 0 0;
+    font-size: 7px;
+  }
+  .flight-visual {
+    height: 315px;
+  }
+  .travel-clock {
+    top: 18px;
+    left: 19px;
+  }
+  .travel-clock small {
+    font-size: 6px;
+  }
+  .travel-clock strong {
+    font-size: 23px;
+    margin-top: 6px;
+  }
+  .travel-caption {
+    left: 19px;
+    right: 19px;
+    bottom: 16px;
+    width: auto;
+    padding: 10px 12px;
+  }
+  .travel-caption span {
+    font-size: 6px;
+  }
+  .travel-caption p {
+    font-size: 9px;
+    margin-top: 5px;
+  }
+  .travel-telemetry {
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
+  }
+  .travel-telemetry > div {
+    padding: 15px 19px;
+  }
+  .travel-telemetry > div:nth-child(2) {
+    border-right: none;
+  }
+  .travel-telemetry > div:nth-child(-n+2) {
+    border-bottom: 1px solid #32463d;
+  }
+  .travel-telemetry span {
+    font-size: 6px;
+  }
+  .travel-telemetry strong {
+    font-size: 23px;
+    margin-top: 8px;
+  }
+  .travel-telemetry small {
+    font-size: 9px;
+  }
+  .travel-route {
+    padding: 17px 15px 12px;
+  }
+  .travel-route > span {
+    font-size: 5px;
+    gap: 4px;
+  }
+  .travel-route i {
+    width: 4px;
+    height: 4px;
+  }
+  .travel-progress {
+    margin: 0 19px;
+  }
+  .travel-controls {
+    padding: 16px 19px 18px;
+    gap: 13px;
+  }
+  .travel-controls > .outline-button {
+    font-size: 9px;
+    padding: 9px 10px;
+  }
+  .travel-speeds {
+    gap: 4px;
+    margin-left: auto;
+  }
+  .travel-speeds > span {
+    display: none;
+  }
+  .travel-speeds > button {
+    padding: 7px;
+    font-size: 9px;
+  }
+  .travel-hint {
+    font-size: 8px;
+    width: 100%;
+    text-align: center;
+  }
+  .crisis-scene {
+    height: 165px;
+  }
+  .scene-paused, .scene-repaired {
+    font-size: 5px;
+    letter-spacing: .5px;
+    gap: 6px;
+    padding: 8px 10px;
+    bottom: 10px;
+  }
+  .scene-paused .icon, .scene-repaired .icon {
+    width: 10px;
+    height: 10px;
+  }
+  .recovery-scene {
+    height: 155px;
+    margin: 18px -21px 23px;
+  }
+  .flight-dialog .flight-sidebar {
+    padding-top: 22px;
+  }
+  .flight-dialog .flight-main {
+    padding-top: 25px;
+  }
+  .flight-dialog .flight-day b {
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .travel-progress > i {
+    transition: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .is-orbit .flight-visual {
+    height: 220px;
+  }
+  .is-orbit .travel-telemetry > div {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .is-orbit .travel-telemetry strong {
+    font-size: 21px;
+  }
+  .travel-controls {
+    gap: 8px;
+  }
+  .travel-sound > span {
+    display: none;
+  }
+  .travel-controls > .travel-sound {
+    padding: 9px;
+  }
+  .is-ascent .travel-caption {
+    top: 19px;
+    bottom: auto;
+    left: auto;
+    right: 16px;
+    width: 158px;
+  }
 }

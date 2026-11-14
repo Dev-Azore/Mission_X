@@ -1,4 +1,4 @@
-const CACHE = "missionx-v4";
+const CACHE = "missionx-v5";
 const FILES = [
     "./",
     "./index.html",
@@ -11,6 +11,10 @@ const FILES = [
     "./src/game.js",
     "./src/flight-view.js",
     "./src/audio.js",
+    "./src/storage.js",
+    "./src/ui/icons.js",
+    "./src/ui/parts.js",
+    "./src/ui/flight.js",
     "./assets/mark.svg",
     ...["missions", "orbits", "launchers", "parts", "advisors", "events"].map(
         (name) => {
