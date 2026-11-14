@@ -1,0 +1,5 @@
+dist/
+node_modules/
+tmp/
+.DS_Store
+MissionForge_Project_Documentation.pdf

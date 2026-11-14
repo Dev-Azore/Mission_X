@@ -1,0 +1,58 @@
+[
+    {
+        "id": "hello",
+        "name": "Hello, Orbit",
+        "eyebrow": "EARTH OBSERVATION",
+        "description": "When the waters rise, perspective saves lives. Build a satellite that can map floods and get the data home.",
+        "objective": "Monitor flooding from low Earth orbit.",
+        "budget": 95,
+        "years": 2,
+        "science": 55,
+        "required": "camera",
+        "world": "earth",
+        "patch": "FLOODWATCH",
+        "number": "01"
+    },
+    {
+        "id": "lunar",
+        "name": "Lunar Ice Hunter",
+        "eyebrow": "LUNAR EXPLORATION",
+        "description": "There is water hidden in the shadows. Send a polar orbiter to find the ice that could fuel our next giant leap.",
+        "objective": "Find water ice at the lunar poles.",
+        "budget": 180,
+        "years": 3,
+        "science": 80,
+        "required": "spectrometer",
+        "world": "moon",
+        "patch": "POLARIS",
+        "number": "02"
+    },
+    {
+        "id": "apollo",
+        "name": "Against the Odds",
+        "eyebrow": "APOLLO-13 MODE",
+        "description": "A damaged solar array. A very long way from home. Design with enough margin to bring your mission back from the brink.",
+        "objective": "Survive a major solar-array failure and return science.",
+        "budget": 110,
+        "years": 2,
+        "science": 50,
+        "required": "camera",
+        "world": "earth",
+        "patch": "RESILIENCE",
+        "number": "03"
+    },
+    {
+        "id": "sandbox",
+        "name": "Open Cosmos",
+        "eyebrow": "SANDBOX",
+        "description": "No budget ceiling. No wrong questions. Follow your curiosity and discover how one small change can reshape a mission.",
+        "objective": "Experiment freely. Physical limits still apply.",
+        "budget": 1000,
+        "years": 1,
+        "science": 35,
+        "required": null,
+        "world": "earth",
+        "patch": "PATHFINDER",
+        "number": "04"
+    }
+]

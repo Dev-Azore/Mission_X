@@ -1,0 +1,41 @@
+[
+    {
+        "id": "leo",
+        "name": "Low Earth orbit",
+        "short": "LEO",
+        "altitude": "550 km",
+        "period": 95,
+        "sunlight": 0.64,
+        "contact": 0.18,
+        "radiation": 1,
+        "fuel": 1,
+        "world": "earth",
+        "description": "Close to home. Detailed images, frequent eclipses."
+    },
+    {
+        "id": "sso",
+        "name": "Sun-synchronous",
+        "short": "SSO",
+        "altitude": "700 km",
+        "period": 99,
+        "sunlight": 0.82,
+        "contact": 0.23,
+        "radiation": 1.15,
+        "fuel": 1.15,
+        "world": "earth",
+        "description": "Consistent lighting. A little more launch energy."
+    },
+    {
+        "id": "lunar",
+        "name": "Lunar polar orbit",
+        "short": "LPO",
+        "altitude": "100 km",
+        "period": 118,
+        "sunlight": 0.55,
+        "contact": 0.1,
+        "radiation": 1.5,
+        "fuel": 1.4,
+        "world": "moon",
+        "description": "See the poles. Budget for distance and darkness."
+    }
+]

@@ -1,0 +1,23 @@
+[
+    {
+        "id": "maya",
+        "name": "Maya Chen",
+        "role": "SYSTEMS ENGINEER",
+        "initials": "MC",
+        "color": "mint"
+    },
+    {
+        "id": "kofi",
+        "name": "Dr. Kofi Mensah",
+        "role": "MISSION SCIENTIST",
+        "initials": "KM",
+        "color": "violet"
+    },
+    {
+        "id": "okoye",
+        "name": "Chief Okoye",
+        "role": "FLIGHT DIRECTOR",
+        "initials": "CO",
+        "color": "orange"
+    }
+]

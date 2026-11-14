@@ -1,0 +1,99 @@
+[
+    {
+        "id": "flare",
+        "name": "Solar flare inbound",
+        "label": "SPACE WEATHER",
+        "description": "Charged particles are racing toward the spacecraft. Protect the instruments or trust your shielding.",
+        "choices": [
+            {
+                "label": "Enter safe mode",
+                "detail": "Protect hardware; lose 12% science.",
+                "science": -0.12,
+                "health": 0
+            },
+            {
+                "label": "Keep observing",
+                "detail": "Retain science; radiation tests the computer.",
+                "science": 0.03,
+                "risk": 0.24
+            }
+        ]
+    },
+    {
+        "id": "battery",
+        "name": "Battery cell fault",
+        "label": "POWER SYSTEM",
+        "description": "A battery module is running hot. Isolate it now, or keep capacity online at a cost to reliability.",
+        "choices": [
+            {
+                "label": "Isolate the module",
+                "detail": "Lose 25% battery capacity.",
+                "battery": -0.25
+            },
+            {
+                "label": "Cycle the battery",
+                "detail": "Recover capacity; lose 10% science and 8% health.",
+                "science": -0.1,
+                "health": -0.08
+            }
+        ]
+    },
+    {
+        "id": "station",
+        "name": "Ground station offline",
+        "label": "COMMUNICATIONS",
+        "description": "Your next downlink window just disappeared. Buy time on a partner network or store and prioritize the data.",
+        "choices": [
+            {
+                "label": "Rent a partner station",
+                "detail": "Spend $8M; preserve the downlink.",
+                "cost": 8
+            },
+            {
+                "label": "Prioritize key observations",
+                "detail": "Lose 16% science; no extra cost.",
+                "science": -0.16
+            }
+        ]
+    },
+    {
+        "id": "debris",
+        "name": "Debris conjunction",
+        "label": "ORBITAL SAFETY",
+        "description": "A tracked fragment will cross your orbit. A small burn avoids it but shortens your operating life.",
+        "choices": [
+            {
+                "label": "Perform avoidance burn",
+                "detail": "Use reserve fuel; lose 12% lifetime.",
+                "lifetime": -0.12
+            },
+            {
+                "label": "Turn edge-on and wait",
+                "detail": "Save fuel; accept a 16% health penalty.",
+                "health": -0.16
+            }
+        ]
+    },
+    {
+        "id": "array",
+        "name": "Solar array damaged",
+        "label": "APOLLO-13 EMERGENCY",
+        "description": "An array hinge has failed. Power generation is down 40%. The mission now depends on the margin you designed in.",
+        "choices": [
+            {
+                "label": "Reduce instrument duty",
+                "detail": "Recover power balance; sacrifice 25% science.",
+                "solar": -0.4,
+                "load": -0.35,
+                "science": -0.25
+            },
+            {
+                "label": "Reorient the spacecraft",
+                "detail": "Recover part of the power; use fuel and lose 10% science.",
+                "solar": -0.2,
+                "lifetime": -0.2,
+                "science": -0.1
+            }
+        ]
+    }
+]

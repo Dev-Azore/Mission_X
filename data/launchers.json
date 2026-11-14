@@ -1,0 +1,23 @@
+[
+    {
+        "id": "swift",
+        "name": "Swift / Small lift",
+        "capacity": 260,
+        "cost": 12,
+        "description": "A lean ride for a focused mission."
+    },
+    {
+        "id": "atlas",
+        "name": "Atlas / Medium lift",
+        "capacity": 620,
+        "cost": 26,
+        "description": "Room for ambition and a little insurance."
+    },
+    {
+        "id": "titan",
+        "name": "Titan / Heavy lift",
+        "capacity": 1500,
+        "cost": 48,
+        "description": "Big payloads. A bigger commitment."
+    }
+]

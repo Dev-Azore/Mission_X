@@ -1,0 +1,66 @@
+{
+    "instruments": [
+        {
+            "id": "camera",
+            "name": "Multispectral camera",
+            "tag": "FLOOD MAPPING",
+            "description": "Track water, vegetation, and changes on Earth.",
+            "mass": 48,
+            "power": 55,
+            "data": 48,
+            "cost": 12,
+            "science": 64
+        },
+        {
+            "id": "radar",
+            "name": "Synthetic aperture radar",
+            "tag": "ALL-WEATHER VISION",
+            "description": "See through clouds. Your power bill will notice.",
+            "mass": 105,
+            "power": 145,
+            "data": 120,
+            "cost": 26,
+            "science": 100
+        },
+        {
+            "id": "spectrometer",
+            "name": "Infrared spectrometer",
+            "tag": "ICE DETECTION",
+            "description": "Read the chemical fingerprint of hidden water.",
+            "mass": 60,
+            "power": 75,
+            "data": 38,
+            "cost": 19,
+            "science": 100
+        },
+        {
+            "id": "thermal",
+            "name": "Thermal imager",
+            "tag": "TEMPERATURE MAPPING",
+            "description": "Add temperature context to every observation.",
+            "mass": 32,
+            "power": 38,
+            "data": 26,
+            "cost": 9,
+            "science": 40
+        }
+    ],
+    "computers": [
+        {
+            "id": "standard",
+            "name": "Standard flight computer",
+            "mass": 12,
+            "power": 18,
+            "cost": 4,
+            "shielding": 1
+        },
+        {
+            "id": "hardened",
+            "name": "Radiation-hardened computer",
+            "mass": 22,
+            "power": 24,
+            "cost": 10,
+            "shielding": 1.65
+        }
+    ]
+}
