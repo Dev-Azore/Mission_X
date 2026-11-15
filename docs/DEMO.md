@@ -72,7 +72,7 @@ For a longer presentation, try **Against the Odds**. It guarantees array damage 
 
 ## Before presenting
 
-- Run `npm test` and `npm run build`.
+- Run `npm test`
 - Save the demonstration design before launching.
 - Enable sound through its visible control; it starts muted.
 - Keep an archived flight as a fallback, while allowing for the current engine's rules.
