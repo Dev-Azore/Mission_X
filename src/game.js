@@ -169,7 +169,7 @@ export function crisisExplanation(event, flight) {
         },
         flare: {
             meaning:
-                "A burst of charged particles from the Sun can damage the spacecraft’s electronics.",
+                "Solar activity can threaten spacecraft operations. In this simplified challenge, you choose between protecting electronics and continuing research.",
             advice:
                 flight.design.bus.computer === "hardened"
                     ? "Your hardened computer reduces the damage from continued observing. Safe mode still protects more hardware."

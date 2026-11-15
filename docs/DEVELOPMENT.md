@@ -41,6 +41,8 @@ Engine functions return new flight state instead of changing the caller's flight
 
 ## The teaching model
 
+Solar flare observations come from NASA DONKI. `src/space-weather.js` validates the feed and maps recorded classes to game effects; `data/nasa-flares.json` provides verified offline examples. Flights, archive saves, and exports retain the observation snapshot. See [NASA data and game rules](NASA-DATA.md) for attribution, API fields, and the distinction between observations and simulated consequences.
+
 Hardware and launchers are fictional. The calculations are deliberately simplified:
 
 - Mass adds the bus, instruments, panels, battery, antenna, and computer. Orbit changes the rocket's available capacity.
@@ -86,6 +88,7 @@ Browser checks are optional and require an available Playwright installation and
 ```sh
 node tests/browser.js
 node tests/onboarding.js
+node tests/nasa-browser.js
 ```
 
 If these dependencies are installed outside this project, set `PLAYWRIGHT_MODULE` to that Playwright package and `CHROME_PATH` to the browser executable. They are not included in the normal `npm ci` dependencies. Screenshots are written to ignored `tmp/screenshots/`.

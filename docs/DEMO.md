@@ -6,6 +6,8 @@
 
 Open the game and choose **Play your first mission**. Introduce the flood-monitoring objective: 55 science points, $95M, two years, and at least 50% satellite health.
 
+Point out the NASA space weather panel: “MissionX uses real NASA DONKI solar flare observations. The observation class changes the challenge's trade-off, and every sourced alert links to its original record. Our spacecraft consequences are an educational simulation.” Open **View source** to show provenance even if the random flight does not encounter a flare. If the connection is unavailable, identify the saved May 2024 examples as historical data.
+
 ## Build with purpose
 
 Follow Usama's highlighted instructions. Confirm the sun-synchronous path and Atlas rocket, increase the battery to 400 Wh, and set camera observing time to 100%.

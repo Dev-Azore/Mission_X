@@ -1,3 +1,5 @@
+import { applySpaceWeather } from "./space-weather.js";
+
 // The engine has no browser dependencies. Values are educational approximations,
 // not trajectory calculations or specifications for real flight hardware.
 const FLIGHT_DURATION_SECONDS = 120;
@@ -340,6 +342,7 @@ export function createFlight(
     const flight = {
         seed,
         guided,
+        spaceWeather: options.spaceWeather ? structuredClone(options.spaceWeather) : null,
         missionId: mission.id,
         difficulty,
         durationDays: Math.round(mission.years * 365),
@@ -493,7 +496,7 @@ export function advanceFlight(flight, seconds, catalog) {
 
             if (occurs) {
                 next.events.push(
-                    structuredClone(selectIncident(next, catalog)),
+                    applySpaceWeather(selectIncident(next, catalog), next.spaceWeather, next.seed),
                 );
                 next.activeEvent = true;
                 break;

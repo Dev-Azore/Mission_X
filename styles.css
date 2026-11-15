@@ -3952,3 +3952,33 @@ dialog .full {
     scroll-behavior: auto !important
   }
 }
+:root .nasa-weather {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    margin: 16px 0;
+    border: 1px solid #334557;
+    border-radius: 12px;
+    background: #101d2a;
+    color: #e6edf4;
+}
+
+.nasa-weather h3 { margin: 6px 0; }
+.nasa-weather p { margin: 6px 0; max-width: 65ch; }
+.nasa-weather summary { cursor: pointer; }
+.nasa-observation {
+    margin: 14px 0;
+    padding: 16px;
+    border-left: 3px solid #73d7c8;
+    background: #162637;
+    color: #e6edf4;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+.nasa-observation p { margin: 6px 0; }
+.nasa-observation a { color: #91e7da; text-decoration: underline; }
+

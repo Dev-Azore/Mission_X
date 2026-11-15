@@ -29,6 +29,7 @@ import { renderTravelScreen } from "./ui/flight.js";
 import { icon } from "./ui/icons.js";
 import { renderPartsContent } from "./ui/parts.js";
 import { createStorage } from "./storage.js";
+import { loadSpaceWeather, normalizeFlares } from "./space-weather.js";
 
 const $ = (selector) => {
     return document.querySelector(selector);
@@ -62,6 +63,8 @@ const state = {
     progress: {},
     replayGuided: false,
     replaySeed: null,
+    spaceWeather: null,
+    replayWeather: null,
 };
 let gauges;
 let orbitView;
@@ -135,6 +138,7 @@ function shell() {
     <main>
       <section class="mission-heading"><div><div class="eyebrow"><span class="live-dot"></span> FLIGHT OPERATIONS <span class="slash">/</span> <span id="mission-type">EARTH OBSERVATION</span></div><h1>Make the mission possible<span>.</span></h1><p>One spacecraft. A thousand trade-offs. Every decision is connected.</p></div><button class="outline-button mission-switch" data-action="missions"><span class="mission-number" id="mission-number">01</span><span><small>YOUR MISSION</small><strong id="mission-name">Hello, Orbit</strong></span>${icon("chevron")}</button></section>
       <section class="brief-bar" aria-label="Mission brief"><span class="brief-icon">${icon("flag")}</span><div><span class="micro">THE OBJECTIVE</span><p id="objective"></p></div><div class="brief-target"><span class="micro">BUDGET</span><strong id="budget-target"></strong></div><div class="brief-target"><span class="micro">LIFETIME</span><strong id="life-target"></strong></div><label class="difficulty"><span class="micro">YOUR SEAT</span><select id="difficulty" aria-label="Difficulty"><option value="cadet">Cadet</option><option value="engineer" selected>Engineer</option><option value="director">Flight Director</option></select></label></section>
+      <section id="nasa-weather" class="nasa-weather" aria-label="NASA space weather"></section>
       <section id="mission-objectives" class="mission-objectives" aria-label="Your goals and game progress"></section>
       <div class="workspace-top"><div class="workspace-title"><span class="section-index">01</span><h2>Build your satellite</h2><span class="pill">DESIGN PHASE</span></div><div class="workspace-actions"><button class="text-button" data-action="tutorial" title="Learn by building and flying your first satellite">${icon("help")} Guided mission</button>
         <button class="text-button" data-action="reset" title="Restore this mission’s starting design. Your saved designs and flight archive stay.">${icon("reset")} Reset</button>
@@ -813,8 +817,12 @@ function startLaunch() {
         catalog,
         state.seed,
         state.difficulty,
-        { guided: state.tutorial !== null || state.replayGuided },
+        {
+            guided: state.tutorial !== null || state.replayGuided,
+            spaceWeather: state.replayWeather || state.spaceWeather,
+        },
     );
+    state.replayWeather = null;
     renderObjectives();
     renderTutorial();
     let countdown = 3;
@@ -1038,6 +1046,7 @@ function showFlight() {
         <div class="event-label"><i></i> ${event.label}</div>
         <h2 id="dialog-title">${event.name}<span>.</span></h2>
         <p class="event-description">${explanation.meaning}</p>
+        ${event.nasa ? nasaObservation(event.nasa) : ""}
         <div class="flight-advisor">${icon("comms")}<p><strong>USAMA EXPLAINS</strong>${explanation.advice}</p></div>
         <span class="micro">PICK A RESPONSE · SEE THE TRADE-OFF BEFORE YOU COMMIT</span>
         <div class="event-choices">${event.choices
@@ -1205,6 +1214,7 @@ function finishFlight() {
         difficulty: state.difficulty,
         seed: state.flight.seed,
         guided: state.flight.guided,
+        spaceWeather: state.flight.spaceWeather,
         report,
     });
     state.attempts = state.attempts.slice(0, 3);
@@ -1264,6 +1274,7 @@ function loadDesign(
     state.tutorial = null;
     state.replayGuided = false;
     state.replaySeed = null;
+    state.replayWeather = null;
     state.missionId = missionId;
     state.design = structuredClone(design);
     state.difficulty = difficulty;
@@ -1379,6 +1390,7 @@ document.addEventListener("click", (event) => {
         loadDesign(item.missionId, item.design, item.difficulty);
         state.replaySeed = item.seed;
         state.replayGuided = Boolean(item.guided);
+        state.replayWeather = item.spaceWeather || null;
 
         return;
     }
@@ -1590,7 +1602,9 @@ document.addEventListener("click", (event) => {
                     difficulty: state.difficulty,
                     design: state.flight.design,
                     operations: state.flight.controlLog,
-                    engineVersion: 2,
+                    spaceWeather: state.flight.spaceWeather,
+                    events: state.flight.events,
+                    engineVersion: 3,
                     timeline: state.flight.timeline,
                     report: state.report,
                 },
@@ -1802,6 +1816,34 @@ $("#dialog").addEventListener("close", () => {
     }
 });
 
+function nasaObservation(observation) {
+    const date = new Date(observation.beginTime).toLocaleString("en-GB", {
+        timeZone: "UTC", dateStyle: "medium", timeStyle: "short",
+    });
+
+    return `<div class="nasa-observation">
+        <strong>NASA DONKI · ${escapeHtml(observation.classType)} flare</strong>
+        <p>Observed ${escapeHtml(date)} UTC · ${observation.mode === "recent" ? "Recent NASA record" : "Archived NASA example"}</p>
+        <p>This flight replays a recorded event. Challenge timing, damage and recovery are game rules, not NASA predictions.</p>
+        <a href="${escapeHtml(observation.link)}" target="_blank" rel="noopener noreferrer">Read the NASA event record ↗</a>
+    </div>`;
+}
+
+function renderSpaceWeather() {
+    const panel = $("#nasa-weather");
+    const weather = state.spaceWeather;
+
+    if (!panel || !weather) {
+        return;
+    }
+
+    panel.innerHTML = `<div><span class="micro">REAL DATA · NASA DONKI</span>
+        <h3>Space weather shapes your challenge.</h3>
+        <p>Solar flare challenges use recorded NASA events. You still decide how to protect your satellite.</p></div>
+        <details><summary>${weather.mode === "recent" ? "Recent NASA records loaded" : "Using saved NASA examples"} · View source</summary>
+        ${nasaObservation({ ...weather.events[0], mode: weather.mode })}</details>`;
+}
+
 async function init() {
     try {
         const names = [
@@ -1811,6 +1853,7 @@ async function init() {
             "parts",
             "advisors",
             "events",
+            "nasa-flares",
         ];
         const entries = await Promise.all(
             names.map(async (name) => {
@@ -1825,6 +1868,7 @@ async function init() {
         );
 
         Object.assign(catalog, Object.fromEntries(entries));
+        state.spaceWeather = { mode: "archive", events: normalizeFlares(catalog["nasa-flares"]) };
         const saved = readStorage("missionx-session", null);
 
         if (
@@ -1899,6 +1943,11 @@ async function init() {
 
         state.sound = Boolean(readStorage("missionx-sound", false));
         shell();
+        renderSpaceWeather();
+        loadSpaceWeather(catalog["nasa-flares"]).then((weather) => {
+            state.spaceWeather = weather;
+            renderSpaceWeather();
+        });
         if (!readStorage("missionx-intro-v2", false)) {
             showWelcome();
         }

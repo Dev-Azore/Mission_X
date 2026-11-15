@@ -1,4 +1,4 @@
-const CACHE = "missionx-v5";
+const CACHE = "missionx-v6";
 const FILES = [
     "./",
     "./index.html",
@@ -7,6 +7,8 @@ const FILES = [
     "./assets/flight.css",
     "./src/app.js",
     "./src/engine.js",
+    "./src/space-weather.js",
+    "./data/nasa-flares.json",
     "./src/orbit.js",
     "./src/game.js",
     "./src/flight-view.js",

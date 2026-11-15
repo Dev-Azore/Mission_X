@@ -4,6 +4,12 @@ You are the mission director. Build a satellite, launch it, and decide what to d
 
 For a first game, select **Play your first mission**. Follow Usama's highlighted steps. You can choose **Explore on my own** to leave the tutorial, or **Guided mission** above the console to return to it.
 
+## What does the NASA panel mean?
+
+The space weather panel uses NASA's DONKI solar flare records. Open **View source** to see a real observation and its NASA link. **Recent NASA records loaded** means the game fetched observations from the past 30 days. **Using saved NASA examples** means it is using verified historical records
+
+If a solar flare challenge occurs, its class and date appear beside your response choices. X-class examples create a harder trade-off than M-class examples. Choose a response, inspect the result, then press **Resume flight**. Incident timing and spacecraft damage are game rules; the NASA record does not mean your satellite faces a real warning today. Flare challenges remain random, so one might not occur on every flight.
+
 ## What are we trying to accomplish?
 
 Each mission has four goals:
