@@ -55,6 +55,7 @@ dist/            Generated website; do not edit here
 | `npm ci` | Install the development tools from the lockfile. |
 | `npm run dev` | Start the local server with Node's watch mode. |
 | `npm start` | Start the same server without watch mode. |
+| `npm run build` | Create the static publishing copy in `dist/`. |
 | `npm run lint` | Check JavaScript against `eslint.config.js`. |
 | `npm run lint:fix` | Apply the fixes ESLint can automate. Review the changes afterward. |
 | `npm test` | Check the simulation, progression, sound, and save handling. |
